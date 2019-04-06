@@ -1,3 +1,7 @@
-const UserController = require("../controllers")
+const UserController = require("./userController")
+const TodoController = require("./todoController")
 
-module.exports = {UserController}
+module.exports = {
+  UserController,
+  TodoController
+}

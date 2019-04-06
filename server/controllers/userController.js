@@ -23,7 +23,11 @@ class UserController {
           name: foundUser.name
         }, process.env.JWT_SECRET)
 
-        res.status(200).json({token})
+        res.status(200).json({
+          token,
+          id: foundUser._id,
+          name: foundUser.name
+        })
       }
       else {
         res.status(401).json({
@@ -77,12 +81,7 @@ class UserController {
         })
       }
       else {
-        const token = jwt.sign({
-          email: foundUser.email,
-          name: foundUser.name
-        }, process.env.JWT_SECRET)
-
-        res.status(200).json({ token })
+        return foundUser
       }
     })
     .then(user => {
@@ -91,7 +90,11 @@ class UserController {
         name: user.name
       }, process.env.JWT_SECRET)
 
-      res.status(200).json(token)
+      res.status(200).json({
+        token,
+        id: user._id,
+        name: user.name
+      })
     })
     .catch(err => {
       console.log(err);

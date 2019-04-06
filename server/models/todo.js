@@ -1,7 +1,6 @@
 const mongoose = require("mongoose")
 const { Schema } = mongoose
 const moment = require("moment")
-// console.log(moment(new Date()).format("YYYY/MM/DD"));
 
 const todoSchema = new Schema({
   name: {
@@ -23,13 +22,13 @@ const todoSchema = new Schema({
   },
   createdAt: {
     type: Date,
-    default: new Date()
+    default: moment().format() 
   },
   updatedAt: {
     type: Date,
-    default: new Date()
+    default: moment().format() 
   },
-  userId: {
+  UserId: {
     type: Schema.Types.ObjectId,
     ref: "User"
   }
