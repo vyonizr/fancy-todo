@@ -22,11 +22,11 @@ const todoSchema = new Schema({
   },
   createdAt: {
     type: Date,
-    default: moment().format() 
+    default: Date.now
   },
   updatedAt: {
     type: Date,
-    default: moment().format() 
+    default: Date.now
   },
   UserId: {
     type: Schema.Types.ObjectId,

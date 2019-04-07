@@ -8,7 +8,7 @@ class TodoController {
     }, "todos")
     .populate({
       path: 'todos',
-      select: 'createdAt name description dueDate',
+      select: 'createdAt updatedAt name description dueDate',
       match: { status: false },
       options: {
         sort: {
@@ -23,11 +23,52 @@ class TodoController {
     })
   }
 
+  static getDoneTodos(req, res) {
+    User.findOne({
+      email: req.authenticatedUser.email
+    }, "todos")
+    .populate({
+      path: 'todos',
+      select: 'createdAt updatedAt name description dueDate',
+      match: { status: true },
+      options: {
+        sort: {
+          dueDate: 1 }
+      }
+    })
+    .then(({todos}) => {
+      res.status(200).json(todos)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+  }
+
+  static getSomeonesTodo(req, res) {
+    User.findOne({
+      _id: req.params.userId
+    }, "name todos")
+    .populate({
+      path: 'todos',
+      select: 'createdAt updatedAt name description dueDate completedAt',
+      match: { status: false },
+      options: {
+        sort: {
+          dueDate: 1 }
+      }
+    })
+    .then(foundUser => {
+      res.status(200).json(foundUser)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+  }
+
   static createATodo(req, res) {
-    console.log("tembus create");
     Todo.create({
-      name: req.body.name,
-      description: req.body.description,
+      name: encodeURI(req.body.name),
+      description: encodeURI(req.body.description),
       dueDate: req.body.dueDate,
       UserId: ObjectId(req.params.userId)
     })
@@ -50,7 +91,6 @@ class TodoController {
   }
 
   static deleteATodo(req, res) {
-    console.log(req.params.todoId);
     Todo.deleteOne({
       _id: req.params.todoId
     })
@@ -66,8 +106,8 @@ class TodoController {
 
   static updateATodo(req, res) {
     Todo.findByIdAndUpdate(req.params.todoId, {
-      name: req.body.name,
-      dueDate: req.body.dueDate,
+      name: encodeURI(req.body.name),
+      description: encodeURI(req.body.description),
       description: req.body.description,
       updatedAt: new Date()
     }, {new: true})
