@@ -7,6 +7,20 @@ const randomstring = require("randomstring")
 const jwt = require("jsonwebtoken")
 
 class UserController {
+  static getAllUsers(req, res) {
+    User.find({
+      email: {
+        $ne: req.authenticatedUser.email
+      }
+    }, "_id name")
+    .then(users => {
+      res.status(200).json(users)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+  }
+
   static userLogin(req, res) {
     User.findOne({
       email: req.body.email
@@ -97,7 +111,6 @@ class UserController {
       })
     })
     .catch(err => {
-      console.log(err);
       res.status(500).json(err)
     })
   }
