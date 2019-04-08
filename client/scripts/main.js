@@ -3,10 +3,13 @@ const baseURL = "http://localhost:3000"
 
 
 const newTaskButton = `
-<a href="#" data-toggle="modal" data-target="#create-new-task-modal" data-aos="zoom-out" data-aos-duration="500">
+<div style="margin-top: 2rem;">
+  <a href="#" data-toggle="modal" data-target="#create-new-task-modal" data-aos="zoom-out" data-aos-duration="500">
   <i class="material-icons md-60" style="color: white ; font-size: 3rem; text-decoration: none;">add_circle_outline</i>
-</a>
-<h3 class="text-light" data-aos="fade-up" data-aos-delay="150" data-aos-anchor-placement="top-bottom">Add new task</h3>`
+  </a>
+  <h3 class="text-light" style="font-family: 'Source Sans Pro'; sans-serif;" data-aos="fade-up" data-aos-delay="150" data-aos-anchor-placement="top-bottom">Add new task</h3>
+</div>
+`
 
 const signOutButton =`
 <a href="#" onclick="signOut();" id="a-sign-out"><button type="button" class="btn btn-outline-dark">Sign out</button></a>`
@@ -46,6 +49,7 @@ $(document).ready(() => {
 
   if (!localStorage.getItem("token")) {
     $("#sidebar").hide()
+    $("#top-navbar").hide()
     $("#sidebarCollapse").hide()
     $("#authenticated-page").hide()
     $("#brand-a-nav").show()
@@ -60,15 +64,6 @@ $(document).ready(() => {
   });
 });
 
-
-
-
-function pastTime(a) {
-  if (Math.abs(moment().diff(this)) < 1000) { // 1000 milliseconds
-      return 'just now';
-  }
-  return this.fromNow(a);
-}
 
 // TODO - fetchTodos()
 function fetchTodos() {
@@ -95,17 +90,17 @@ function fetchTodos() {
       }
 
       let dueDate = `
-      <h6 class="card-subtitle mb-2 text-muted text-center">${moment(todo.dueDate).format("dddd, D MMMM YYYY")}<br>
+      <h6 class="card-subtitle mb-2 text-muted text-center" style="font-family: 'Source Sans Pro'; sans-serif;">${moment(todo.dueDate).format("dddd, D MMMM YYYY")}<br>
         ${moment(todo.dueDate).format("hh:mm A")}
       </h6>`
 
       todoCards += `
       <div class="col-md-4" data-aos="flip-up" data-aos-delay="${aosDelays[~~(Math.random() * aosDelays.length)]}">
-        <div class="card h-auto" style="margin: 1rem">
+        <div class="card h-auto" style="margin: 1rem; width: 19rem;">
           <div class="card-body">
-            <h5 class="card-title text-center">${decodeURIComponent(todo.name)}</h5>
+            <h5 class="card-title text-center" style="font-family: 'Nunito Sans'; sans-serif; font-size: 1.8rem;">${decodeURIComponent(todo.name)}</h5>
             ${dueDate}
-            <p class="card-text">${decodeURIComponent(todo.description)}</p>
+            <p class="card-text" style="font-family: 'Source Sans Pro'; sans-serif;">${decodeURIComponent(todo.description)}</p>
           </div>
           <div class="card-footer">
             <div class="d-flex justify-content-between">
@@ -147,11 +142,10 @@ function fetchDoneTodos() {
     }
   })
   .done(todos => {
-    console.log(todos);
     let doneTodoCards = ""
 
     let doneTodoHeader = `
-    <h3 class="text-light" data-aos="fade-up" data-aos-anchor-placement="top-bottom">Your completed tasks</h3>`
+    <h3 class="text-light" data-aos="fade-up" data-aos-anchor-placement="top-bottom" style="margin-top: 2rem;">Your completed tasks</h3>`
 
     const aosDelays = [0, 100, 200]
 
@@ -172,7 +166,7 @@ function fetchDoneTodos() {
 
       doneTodoCards += `
       <div class="col-md-4" data-aos="flip-up" data-aos-delay="${aosDelays[~~(Math.random() * aosDelays.length)]}">
-        <div class="card h-auto" style="margin: 1rem">
+        <div class="card h-auto" style="margin: 1rem; width: 19rem;">
           <div class="card-body">
             <h5 class="card-title text-center">${decodeURIComponent(todo.name)}</h5>
             ${dueDate}
@@ -182,6 +176,10 @@ function fetchDoneTodos() {
             <div class="d-flex justify-content-between">
               <div>
                 ${createdAtSmall}
+              </div>
+              <div>
+                <a href="#" id="delete-todo-icon" onclick="confirmTodoDelete('${todo._id}')"><i class="material-icons" style="color: #d9534f;" title="Delete">delete_forever</i></a>
+                <a href="#" id="mark-as-done-todo-icon" onclick="confirmTodoOutstanding('${todo._id}')"><i class="material-icons" style="color: #0275d8;" title="Mark as outstanding">undo</i></a>
               </div>
             </div>
           </div>
@@ -231,7 +229,6 @@ function createATodo() {
       }
     })
     .done(response => {
-      console.log(response);
       Swal.fire({
         position: 'top-end',
         type: 'success',
@@ -278,7 +275,6 @@ function confirmTodoDelete(todoId) {
         }
       })
       .done(response => {
-        console.log(response);
         Swal.fire({
           type: 'success',
           showConfirmButton: false,
@@ -294,7 +290,6 @@ function confirmTodoDelete(todoId) {
 }
 
 function confirmTodoUpdate(todo) {
-  console.log(todo);
   $("#todo-name-update-input").val(decodeURIComponent(todo.name))
   $("#todo-due-date-update-input").val(moment(todo.dueDate).format("YYYY-MM-DDTHH:mm"))
   $("#todo-description-update-input").val(decodeURIComponent(todo.description))
@@ -303,7 +298,6 @@ function confirmTodoUpdate(todo) {
 }
 
 function updateATodo(todoId) {
-  console.log("update a todo");
   let $todoNameUpdateInput = $("#todo-name-update-input").val()
   let $todoDueDateUpdateInput = $("#todo-due-date-update-input").val()
   let $todoDescriptionUpdateInput = $("#todo-description-update-input").val()
@@ -329,7 +323,6 @@ function updateATodo(todoId) {
       }
     })
     .done(response => {
-      console.log(response);
       Swal.fire({
         type: 'info',
         title: 'Updated!',
@@ -353,10 +346,9 @@ function confirmTodoDone(todoId) {
     }
   })
   .done(response => {
-    console.log(response);
     Swal.fire({
       type: 'success',
-      title: 'Yay!',
+      title: 'Marked as done!',
       showConfirmButton: false,
       timer: 1500
     })
@@ -367,17 +359,37 @@ function confirmTodoDone(todoId) {
   })
 }
 
-
+function confirmTodoOutstanding(todoId) {
+  $.ajax({
+    url: `${baseURL}/todos/${todoId}/outstanding`,
+    method: "PATCH",
+    headers: {
+      Authentication: localStorage.getItem("token")
+    }
+  })
+  .done(response => {
+    Swal.fire({
+      type: 'success',
+      title: 'Marked as outstanding',
+      showConfirmButton: false,
+      timer: 1500
+    })
+    fetchDoneTodos()
+  })
+  .fail(response => {
+    console.log(response);
+  })
+}
 
 // TODO - onSignIn(googleUser)
 function onSignIn(googleUser) {
   let profile = googleUser.getBasicProfile();
   let idToken = googleUser.getAuthResponse().id_token;
 
-  // console.log('ID: ' + profile.getId());
-  // console.log('Name: ' + profile.getName());
+  console.log('ID: ' + profile.getId());
+  console.log('Name: ' + profile.getName());
   console.log('Image URL: ' + profile.getImageUrl());
-  // console.log('Email: ' + profile.getEmail());
+  console.log('Email: ' + profile.getEmail());
 
   $.ajax({
     url: `${baseURL}/users/google-sign-in`,
@@ -387,17 +399,17 @@ function onSignIn(googleUser) {
     }
   })
   .done(response => {
-    console.log(response);
     localStorage.setItem("token", response.token)
     localStorage.setItem("id", response.id)
     localStorage.setItem("name", response.name)
     localStorage.setItem("authMethod", "google")
 
-    // Swal.fire({
-    //   type: "success",
-    //   title: `Welcome, ${localStorage.getItem("name")}!`,
-    //   showConfirmButton: false
-    // })
+    Swal.fire({
+      type: "success",
+      title: `Welcome, ${localStorage.getItem("name")}!`,
+      showConfirmButton: false,
+      timer: 1500
+    })
 
     fetchTodos()
     fetchAllUsers()
@@ -412,6 +424,7 @@ function onSignIn(googleUser) {
     $("#landing-page").hide()
 
     $("#sidebar").show()
+    $("#top-navbar").show()
     $("#personal-page").show()
     $("#sidebarCollapse").show()
     $("#authenticated-page").show()
@@ -445,7 +458,6 @@ function loginUser() {
     }
   })
   .done(response => {
-    console.log(response);
     localStorage.setItem("token", response.token)
     localStorage.setItem("id", response.id)
     localStorage.setItem("name", response.name)
@@ -454,7 +466,8 @@ function loginUser() {
     Swal.fire({
       type: "success",
       title: `Welcome, ${localStorage.getItem("name")}!`,
-      showConfirmButton: false
+      showConfirmButton: false,
+      timer: 1500
     })
 
     fetchTodos()
@@ -470,6 +483,7 @@ function loginUser() {
     $("#landing-page").hide()
 
     $("#sidebar").show()
+    $("#top-navbar").show()
     $("#personal-page").show()
     $("#sidebarCollapse").show()
     $("#authenticated-page").show()
@@ -515,6 +529,7 @@ function signOut() {
   $("#another-user-todo-cards").empty()
 
   $("#sidebar").hide()
+  $("#top-navbar").hide()
   $("#sidebarCollapse").hide()
   $("#another-user-page").hide()
   $("#authenticated-page").hide()
@@ -522,7 +537,7 @@ function signOut() {
 
   $(".g-signin2").show()
   $("#brand-a-nav").show()
-  $("#landing-page").show()
+  $("#landing-page").fadeIn(500)
 }
 
 
@@ -547,8 +562,7 @@ function registerUser() {
     })
   })
   .fail(err => {
-    console.log(err);
-      Swal.fire({
+    Swal.fire({
       type: 'error',
       title: 'Sorry!',
       text: `${err.responseJSON.errors.name.message}`
@@ -596,7 +610,7 @@ function fetchSomeonesTodo(userId) {
         type: 'info',
         title: "No Todo",
         text: `${foundUser.name} doesn't have any outstanding todos`,
-        showConfirmButton: false,
+        showConfirmButton: false
       })
     }
     else {
@@ -617,7 +631,7 @@ function fetchSomeonesTodo(userId) {
 
         someonesTodoCards += `
         <div class="col-md-4" data-aos="flip-up" data-aos-delay="${aosDelays[~~(Math.random() * aosDelays.length)]}">
-          <div class="card h-auto" style="margin: 1rem">
+          <div class="card h-auto" style="margin: 1rem; width: 19rem;">
             <div class="card-body">
               <h5 class="card-title text-center">${decodeURIComponent(todo.name)}</h5>
               ${dueDate}
