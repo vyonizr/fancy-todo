@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css?family=Satisfy');
+@import url('https://fonts.googleapis.com/css?family=Galada');
+@import url('https://fonts.googleapis.com/css?family=Lato');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+@import url('https://fonts.googleapis.com/css?family=PT+Sans');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+@import url('https://fonts.googleapis.com/css?family=Nunito+Sans');
+
+@font-face {
+  font-family: 'Space Craft';
+  src: url('../fonts/SpaceCraft.ttf');
+}
+
+.full-width-div {
+    position: absolute;
+    width: 100%;
+    left: 0;
+}
+
+.centered-modal.in {
+    display: flex !important;
+}
+.centered-modal .modal-dialog {
+    margin: auto;
+}
+
+.transform-text-color-to-green {
+  animation:colorchange 2s linear;
+  animation-delay: 1s;
+  animation-fill-mode:forwards;
+  animation-iteration-count: 1;
+}
+
+#landing-page {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+.brand-on-main-page {
+  margin: auto;
+}
+
+#tagline {
+  font-family: 'Lato', sans-serif;
+  font-size: 2.2rem;
+  margin: 2rem 1rem;
+}
+
+#authenticated-page, #another-user-page {
+  margin-top: 2rem;
+}
+
+nav#sidebar a {
+  text-decoration: none;
+  color: #f7f7f7 !important;
+}
+
+#a-sign-out {
+  color: black;
+}
+
+.input-group-addon{
+  display: flex;
+  width: 100%;
+  margin-bottom: 15px;
+  color: #f7f7f7;
+  background-color: #292b2c ;
+}
+
+.wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}
+
+a, a:hover, a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    background: #3F3E42;
+    color: white;
+    transition: all 0.3s;
+}
+
+#sidebar .sidebar-header {
+    padding: 12px;
+    background: white;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #E8E7D5;
+}
+
+#sidebar ul p {
+    color: #C1BEBC;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+}
+#sidebar ul li a:hover {
+    color: #3F3E42 !important;
+    background: white;
+}
+
+#sidebar ul li.active > a, a[aria-expanded="true"] {
+    color: #3F3E42;
+    background: #3F3E42;
+}
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #3F3E42;
+}
+
+
+.scene {
+  perspective: 1200px;
+}
+
+.card {
+  width: 25rem;
+  height: 23rem;
+  margin: auto;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+
+.card__face {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  backface-visibility: hidden;
+}
+
+.card__face--front {
+  background: white;
+}
+
+.card__face--back {
+  background: white;
+  transform: rotateY( 180deg );
+}
+
+.card.is-flipped {
+  transform: rotateY(180deg);
+}
+
+@keyframes colorchange {
+  0% {
+    color: white
+  }
+  100% {
+    color: #286723
+  }
+}
