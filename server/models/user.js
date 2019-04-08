@@ -50,7 +50,6 @@ const userSchema = new Schema({
 userSchema.pre("save", function(next) {
   let user = this
 
-  console.log("pre create!!!!!");
   let salt = bcrypt.genSaltSync(10);
   let hash = bcrypt.hashSync(user.password, salt);
 

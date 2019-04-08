@@ -67,8 +67,8 @@ class TodoController {
 
   static createATodo(req, res) {
     Todo.create({
-      name: encodeURI(req.body.name),
-      description: encodeURI(req.body.description),
+      name: req.body.name,
+      description: req.body.description,
       dueDate: req.body.dueDate,
       UserId: ObjectId(req.params.userId)
     })
@@ -106,15 +106,13 @@ class TodoController {
 
   static updateATodo(req, res) {
     Todo.findByIdAndUpdate(req.params.todoId, {
-      name: encodeURI(req.body.name),
-      description: encodeURI(req.body.description),
+      name: req.body.name,
+      dueDate: req.body.dueDate,
       description: req.body.description,
       updatedAt: new Date()
     }, {new: true})
     .then(updatedTodo => {
-      res.status(200).json({
-        message: "update success"
-      })
+      res.status(200).json(updatedTodo)
     })
     .catch(err => {
       res.status(500).json(err)
@@ -127,9 +125,20 @@ class TodoController {
       updatedAt: new Date()
     }, {new: true})
     .then(updatedTodo => {
-      res.status(200).json({
-        message: "update success"
-      })
+      res.status(200).json(updatedTodo)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+  }
+
+  static markATodoAsOutstanding(req, res) {
+    Todo.findByIdAndUpdate(req.params.todoId, {
+      status: false,
+      updatedAt: new Date()
+    }, {new: true})
+    .then(updatedTodo => {
+      res.status(200).json(updatedTodo)
     })
     .catch(err => {
       res.status(500).json(err)

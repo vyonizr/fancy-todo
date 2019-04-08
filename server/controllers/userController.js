@@ -27,7 +27,7 @@ class UserController {
     })
     .then(foundUser => {
       if (!foundUser) {
-        res.status(401).json({
+        res.status(404).json({
           message: "Email not found"
         })
       }

@@ -2,12 +2,19 @@
 @import url('https://fonts.googleapis.com/css?family=Galada');
 @import url('https://fonts.googleapis.com/css?family=Lato');
 @import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
-@import url('https://fonts.googleapis.com/css?family=Signika');
-@import url('https://fonts.googleapis.com/css?family=Hind+Vadodara');
+@import url('https://fonts.googleapis.com/css?family=PT+Sans');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+@import url('https://fonts.googleapis.com/css?family=Nunito+Sans');
 
 @font-face {
   font-family: 'Space Craft';
-  src: url('../fonts/SpaceCraft.ttf'); /* IE9 Compat Modes */
+  src: url('../fonts/SpaceCraft.ttf');
+}
+
+.full-width-div {
+    position: absolute;
+    width: 100%;
+    left: 0;
 }
 
 .centered-modal.in {
@@ -18,7 +25,7 @@
 }
 
 .transform-text-color-to-green {
-  animation:colorchange 3s ease;
+  animation:colorchange 2s linear;
   animation-delay: 1s;
   animation-fill-mode:forwards;
   animation-iteration-count: 1;
