@@ -2,9 +2,8 @@ const { User } = require("../models")
 const { OAuth2Client } = require('google-auth-library');
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const client = new OAuth2Client(CLIENT_ID);
-const bcrypt = require("bcryptjs")
+const { bcrypt, jwt } = require("../helpers")
 const randomstring = require("randomstring")
-const jwt = require("jsonwebtoken")
 
 class UserController {
   static getAllUsers(req, res) {
@@ -33,9 +32,10 @@ class UserController {
       }
       else if (bcrypt.compareSync(req.body.password, foundUser.password)) {
         const token = jwt.sign({
+          id: foundUser._id,
           email: foundUser.email,
           name: foundUser.name
-        }, process.env.JWT_SECRET)
+        })
 
         res.status(200).json({
           token,
@@ -62,14 +62,22 @@ class UserController {
     })
     .then(createdUser => {
       const token = jwt.sign({
+        id: createdUser._id,
         email: createdUser.email,
         name: createdUser.name
-      }, process.env.JWT_SECRET)
+      })
 
       res.status(200).json({ token })
     })
     .catch(err => {
-      res.status(500).json(err)
+      if (err.errors.email || err.errors.name || err.errors.password) {
+        res.status(400).json({
+          message: err.message
+        })
+      }
+      else {
+        res.status(500).json(err)
+      }
     })
   }
 
@@ -100,9 +108,10 @@ class UserController {
     })
     .then(user => {
       const token = jwt.sign({
+        id: user._id,
         email: user.email,
         name: user.name
-      }, process.env.JWT_SECRET)
+      })
 
       res.status(200).json({
         token,
