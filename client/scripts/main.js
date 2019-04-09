@@ -1,7 +1,5 @@
 const baseURL = "http://localhost:3000"
 
-
-
 const newTaskButton = `
 <div style="margin-top: 2rem;">
   <a href="#" data-toggle="modal" data-target="#create-new-task-modal" data-aos="zoom-out" data-aos-duration="500">
@@ -19,11 +17,10 @@ if (localStorage.getItem("token") && localStorage.getItem("authMethod") === "bas
   fetchTodos()
   fetchAllUsers()
 
+  $("#user").empty()
   $(".g-signin2").hide()
   $("#landing-page").hide()
   $("#authenticated-page").show()
-  $("#add-new-task-button").append(newTaskButton)
-  $("#user").empty()
   $("#user").append(signOutButton)
 }
 
@@ -75,50 +72,52 @@ function fetchTodos() {
     }
   })
   .done(todos => {
+    console.log(todos);
     let todoCards = ""
 
     const aosDelays = [0, 100, 200]
 
-    todos.forEach(todo => {
-      let createdAtSmall = `
-        <small class="text-muted" id="created-at-small">Created ${moment(todo.createdAt).fromNow()}</small>
-      `
-      if (todo.createdAt !== todo.updatedAt) {
-        createdAtSmall = `
-        <small class="text-muted" id="created-at-small" title="Modified: ${moment(todo.updatedAt).format("dddd, D MMMM YYYY")} (${moment(todo.updatedAt).format("hh:mm A")})">Created ${moment(todo.createdAt).fromNow()}*</small>
+    if (todos.length > 0) {
+      todos.forEach(todo => {
+        let createdAtSmall = `
+          <small class="text-muted" id="created-at-small">Created ${moment(todo.createdAt).fromNow()}</small>
         `
-      }
+        if (todo.createdAt !== todo.updatedAt) {
+          createdAtSmall = `
+          <small class="text-muted" id="created-at-small" title="Modified: ${moment(todo.updatedAt).format("dddd, D MMMM YYYY")} (${moment(todo.updatedAt).format("hh:mm A")})">Created ${moment(todo.createdAt).fromNow()}*</small>
+          `
+        }
 
-      let dueDate = `
-      <h6 class="card-subtitle mb-2 text-muted text-center" style="font-family: 'Source Sans Pro'; sans-serif;">${moment(todo.dueDate).format("dddd, D MMMM YYYY")}<br>
-        ${moment(todo.dueDate).format("hh:mm A")}
-      </h6>`
+        let dueDate = `
+        <h6 class="card-subtitle mb-2 text-muted text-center" style="font-family: 'Source Sans Pro'; sans-serif;">${moment(todo.dueDate).format("dddd, D MMMM YYYY")}<br>
+          ${moment(todo.dueDate).format("hh:mm A")}
+        </h6>`
 
-      todoCards += `
-      <div class="col-md-4" data-aos="flip-up" data-aos-delay="${aosDelays[~~(Math.random() * aosDelays.length)]}">
-        <div class="card h-auto" style="margin: 1rem; width: 19rem;">
-          <div class="card-body">
-            <h5 class="card-title text-center" style="font-family: 'Nunito Sans'; sans-serif; font-size: 1.8rem;">${decodeURIComponent(todo.name)}</h5>
-            ${dueDate}
-            <p class="card-text" style="font-family: 'Source Sans Pro'; sans-serif;">${decodeURIComponent(todo.description)}</p>
-          </div>
-          <div class="card-footer">
-            <div class="d-flex justify-content-between">
-              <div>
-                ${createdAtSmall}
-              </div>
-              <div>
-                <a href="#" id="delete-todo-icon" onclick="confirmTodoDelete('${todo._id}')"><i class="material-icons" style="color: #d9534f;" title="Delete">delete_forever</i></a>
-                <a href="#" id="update-todo-icon" onclick="confirmTodoUpdate({id: '${todo._id}', name: '${encodeURI(todo.name)}', description: '${encodeURI(todo.description)}', dueDate: '${todo.dueDate}'})" data-toggle="modal" data-target="#update-task-modal"><i class="material-icons" style="color: #0275d8;" title="Edit">edit</i></a>
-                <a href="#" id="mark-as-done-todo-icon" onclick="confirmTodoDone('${todo._id}')"><i class="material-icons" style="color: #5cb85c;" title="Mark as done">done</i></a>
+        todoCards += `
+        <div class="col-md-4" data-aos="flip-up" data-aos-delay="${aosDelays[~~(Math.random() * aosDelays.length)]}">
+          <div class="card h-auto" style="margin: 1rem; width: 19rem;">
+            <div class="card-body">
+              <h5 class="card-title text-center" style="font-family: 'Nunito Sans'; sans-serif; font-size: 1.8rem;">${decodeURIComponent(todo.name)}</h5>
+              ${dueDate}
+              <p class="card-text" style="font-family: 'Source Sans Pro'; sans-serif;">${decodeURIComponent(todo.description)}</p>
+            </div>
+            <div class="card-footer">
+              <div class="d-flex justify-content-between">
+                <div>
+                  ${createdAtSmall}
+                </div>
+                <div>
+                  <a href="#" id="delete-todo-icon" onclick="confirmTodoDelete({ id: '${todo._id}', owner: '${todo.UserId}' })"><i class="material-icons" style="color: #d9534f;" title="Delete">delete_forever</i></a>
+                  <a href="#" id="update-todo-icon" onclick="confirmTodoUpdate({ id: '${todo._id}', name: '${encodeURI(todo.name)}', description: '${encodeURI(todo.description)}', dueDate: '${todo.dueDate}', owner: '${todo.UserId}' })" data-toggle="modal" data-target="#update-task-modal"><i class="material-icons" style="color: #0275d8;" title="Edit">edit</i></a>
+                  <a href="#" id="mark-as-done-todo-icon" onclick="confirmTodoDone({ id: '${todo._id}', owner: '${todo.UserId}' })"><i class="material-icons" style="color: #5cb85c;" title="Mark as done">done</i></a>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      `
-    })
-
+        `
+      })
+    }
     $("#todo-cards").empty();
     $("#add-new-task-button").empty();
     $("#another-user-page").hide()
@@ -178,8 +177,8 @@ function fetchDoneTodos() {
                 ${createdAtSmall}
               </div>
               <div>
-                <a href="#" id="delete-todo-icon" onclick="confirmTodoDelete('${todo._id}')"><i class="material-icons" style="color: #d9534f;" title="Delete">delete_forever</i></a>
-                <a href="#" id="mark-as-done-todo-icon" onclick="confirmTodoOutstanding('${todo._id}')"><i class="material-icons" style="color: #0275d8;" title="Mark as outstanding">undo</i></a>
+                <a href="#" id="delete-todo-icon" onclick="confirmTodoDelete({ id: '${todo._id}', owner: '${todo.UserId}' })"><i class="material-icons" style="color: #d9534f;" title="Delete">delete_forever</i></a>
+                <a href="#" id="mark-as-done-todo-icon" onclick="confirmTodoOutstanding({ id: '${todo._id}', owner: '${todo.UserId}' })"><i class="material-icons" style="color: #0275d8;" title="Mark as outstanding">undo</i></a>
               </div>
             </div>
           </div>
@@ -214,7 +213,6 @@ function createATodo() {
       showConfirmButton: false,
     })
   }
-  else {
     $("#todo-create-button").attr("data-dismiss", "modal")
     $.ajax({
       url: `${baseURL}/todos/${localStorage.getItem("id")}/create`,
@@ -245,10 +243,9 @@ function createATodo() {
     .fail(response => {
       console.log(response);
     })
-  }
 }
 
-function confirmTodoDelete(todoId) {
+function confirmTodoDelete(todo) {
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
       confirmButton: 'btn btn-outline-danger',
@@ -268,10 +265,11 @@ function confirmTodoDelete(todoId) {
   }).then((result) => {
     if (result.value) {
       $.ajax({
-        url: `${baseURL}/todos/${todoId}`,
+        url: `${baseURL}/todos/${todo.id}`,
         method: "DELETE",
         headers: {
-          Authentication: localStorage.getItem("token")
+          Authentication: localStorage.getItem("token"),
+          Authorization: todo.owner
         }
       })
       .done(response => {
@@ -290,14 +288,15 @@ function confirmTodoDelete(todoId) {
 }
 
 function confirmTodoUpdate(todo) {
+  console.log(todo);
   $("#todo-name-update-input").val(decodeURIComponent(todo.name))
   $("#todo-due-date-update-input").val(moment(todo.dueDate).format("YYYY-MM-DDTHH:mm"))
   $("#todo-description-update-input").val(decodeURIComponent(todo.description))
 
-  $("#todo-update-button").attr("onclick", `updateATodo('${todo.id}')`);
+  $("#todo-update-button").attr("onclick", `updateATodo({ id: '${todo.id}', owner: '${todo.owner}' })`);
 }
 
-function updateATodo(todoId) {
+function updateATodo(todo) {
   let $todoNameUpdateInput = $("#todo-name-update-input").val()
   let $todoDueDateUpdateInput = $("#todo-due-date-update-input").val()
   let $todoDescriptionUpdateInput = $("#todo-description-update-input").val()
@@ -311,10 +310,11 @@ function updateATodo(todoId) {
   }
   else {
     $.ajax({
-      url: `${baseURL}/todos/${todoId}`,
+      url: `${baseURL}/todos/${todo.id}`,
       method: "PATCH",
       headers: {
-        Authentication: localStorage.getItem("token")
+        Authentication: localStorage.getItem("token"),
+        Authorization: todo.owner
       },
       data: {
         name: $todoNameUpdateInput,
@@ -337,12 +337,13 @@ function updateATodo(todoId) {
   }
 }
 
-function confirmTodoDone(todoId) {
+function confirmTodoDone(todo) {
   $.ajax({
-    url: `${baseURL}/todos/${todoId}/done`,
+    url: `${baseURL}/todos/${todo.id}/done`,
     method: "PATCH",
     headers: {
-      Authentication: localStorage.getItem("token")
+      Authentication: localStorage.getItem("token"),
+      Authorization: todo.owner
     }
   })
   .done(response => {
@@ -359,12 +360,13 @@ function confirmTodoDone(todoId) {
   })
 }
 
-function confirmTodoOutstanding(todoId) {
+function confirmTodoOutstanding(todo) {
   $.ajax({
-    url: `${baseURL}/todos/${todoId}/outstanding`,
+    url: `${baseURL}/todos/${todo.id}/outstanding`,
     method: "PATCH",
     headers: {
-      Authentication: localStorage.getItem("token")
+      Authentication: localStorage.getItem("token"),
+      Authorization: todo.owner
     }
   })
   .done(response => {
@@ -441,6 +443,7 @@ function onSignIn(googleUser) {
 
   if (localStorage.getItem("token")) {
     $("#landing-page").hide()
+    $("#add-new-task-button").append(newTaskButton)
     $("#authenticated-page").show()
   }
 }
@@ -491,8 +494,8 @@ function loginUser() {
 
     $("#user").empty()
 
-    $("#add-new-task-button").append(newTaskButton)
     $("#user").append(signOutButton)
+    $("#add-new-task-button").append(newTaskButton)
   })
   .fail(err => {
     Swal.fire({
@@ -507,6 +510,7 @@ function loginUser() {
 
   if (localStorage.getItem("token")) {
     $("#landing-page").hide()
+    $("#add-new-task-button").append(newTaskButton)
     $("#authenticated-page").show()
   }
 }
@@ -560,12 +564,20 @@ function registerUser() {
       type: "success",
       title: "Registration success!",
     })
+
+    $("#email-register-input").val("")
+    $("#full-name-register-input").val("")
+    $("#password-register-input").val("")
+
+    $(".card").toggleClass('is-flipped')
+    $(".register-form-wrapper").fadeOut(100)
+    $(".login-form-wrapper").fadeIn(250)
   })
   .fail(err => {
     Swal.fire({
       type: 'error',
       title: 'Sorry!',
-      text: `${err.responseJSON.errors.name.message}`
+      text: `${err.responseJSON.message}`
     })
   })
 }

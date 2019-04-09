@@ -32,6 +32,7 @@ class UserController {
       }
       else if (bcrypt.compareSync(req.body.password, foundUser.password)) {
         const token = jwt.sign({
+          id: foundUser._id,
           email: foundUser.email,
           name: foundUser.name
         })
@@ -61,6 +62,7 @@ class UserController {
     })
     .then(createdUser => {
       const token = jwt.sign({
+        id: createdUser._id,
         email: createdUser.email,
         name: createdUser.name
       })
@@ -68,7 +70,14 @@ class UserController {
       res.status(200).json({ token })
     })
     .catch(err => {
-      res.status(500).json(err)
+      if (err.errors.email || err.errors.name || err.errors.password) {
+        res.status(400).json({
+          message: err.message
+        })
+      }
+      else {
+        res.status(500).json(err)
+      }
     })
   }
 
@@ -99,6 +108,7 @@ class UserController {
     })
     .then(user => {
       const token = jwt.sign({
+        id: user._id,
         email: user.email,
         name: user.name
       })

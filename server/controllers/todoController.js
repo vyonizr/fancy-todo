@@ -8,11 +8,12 @@ class TodoController {
     }, "todos")
     .populate({
       path: 'todos',
-      select: 'createdAt updatedAt name description dueDate',
+      select: 'createdAt updatedAt name description dueDate UserId',
       match: { status: false },
       options: {
         sort: {
-          dueDate: 1 }
+          dueDate: 1
+        }
       }
     })
     .then(({todos}) => {
@@ -29,11 +30,12 @@ class TodoController {
     }, "todos")
     .populate({
       path: 'todos',
-      select: 'createdAt updatedAt name description dueDate',
+      select: 'createdAt updatedAt name description dueDate UserId',
       match: { status: true },
       options: {
         sort: {
-          dueDate: 1 }
+          dueDate: 1
+        }
       }
     })
     .then(({todos}) => {
@@ -86,7 +88,14 @@ class TodoController {
       res.status(201).json(updatedUser)
     })
     .catch(err => {
-      res.status(500).json(err)
+      if (err.errors.name || err.errors.description || err.errors.dueDate) {
+        res.status(400).json({
+          message: err.message
+        })
+      }
+      else {
+        res.status(500).json(err)
+      }
     })
   }
 
@@ -115,7 +124,14 @@ class TodoController {
       res.status(200).json(updatedTodo)
     })
     .catch(err => {
-      res.status(500).json(err)
+      if (err.errors.name || err.errors.description || err.errors.dueDate) {
+        res.status(400).json({
+          message: err.message
+        })
+      }
+      else {
+        res.status(500).json(err)
+      }
     })
   }
 
