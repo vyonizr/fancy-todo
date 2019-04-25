@@ -2,9 +2,8 @@ const { User } = require("../models")
 const { OAuth2Client } = require('google-auth-library');
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const client = new OAuth2Client(CLIENT_ID);
-const bcrypt = require("bcryptjs")
+const { bcrypt, jwt } = require("../helpers")
 const randomstring = require("randomstring")
-const jwt = require("jsonwebtoken")
 
 class UserController {
   static getAllUsers(req, res) {
@@ -27,15 +26,16 @@ class UserController {
     })
     .then(foundUser => {
       if (!foundUser) {
-        res.status(404).json({
-          message: "Email not found"
+        res.status(401).json({
+          message: "Wrong username/password"
         })
       }
       else if (bcrypt.compareSync(req.body.password, foundUser.password)) {
         const token = jwt.sign({
+          id: foundUser._id,
           email: foundUser.email,
           name: foundUser.name
-        }, process.env.JWT_SECRET)
+        })
 
         res.status(200).json({
           token,
@@ -62,14 +62,32 @@ class UserController {
     })
     .then(createdUser => {
       const token = jwt.sign({
+        id: createdUser._id,
         email: createdUser.email,
         name: createdUser.name
-      }, process.env.JWT_SECRET)
+      })
 
       res.status(200).json({ token })
     })
     .catch(err => {
-      res.status(500).json(err)
+      if (err.errors) {
+        let objError = {}
+        if (err.errors.email) {
+          objError.email = err.errors.email.message
+        }
+        if (err.errors.name) {
+          objError.name = err.errors.name.message
+        }
+        if (err.errors.password) {
+          objError.password = err.errors.password.message
+        }
+        res.status(400).json({
+          message: err.message
+        })
+      }
+      else {
+        res.status(500).json(err)
+      }
     })
   }
 
@@ -100,9 +118,10 @@ class UserController {
     })
     .then(user => {
       const token = jwt.sign({
+        id: user._id,
         email: user.email,
         name: user.name
-      }, process.env.JWT_SECRET)
+      })
 
       res.status(200).json({
         token,
