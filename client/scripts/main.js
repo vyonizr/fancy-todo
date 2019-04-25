@@ -2,10 +2,10 @@ const baseURL = "http://localhost:3000"
 
 const newTaskButton = `
 <div style="margin-top: 2rem;">
-  <a href="#" data-toggle="modal" data-target="#create-new-task-modal" data-aos="zoom-out" data-aos-duration="500">
+  <a href="#" data-toggle="modal" data-target="#create-new-task-modal">
   <i class="material-icons md-60" style="color: white ; font-size: 3rem; text-decoration: none;">add_circle_outline</i>
   </a>
-  <h3 class="text-light" style="font-family: 'Source Sans Pro'; sans-serif;" data-aos="fade-up" data-aos-delay="150" data-aos-anchor-placement="top-bottom">Add new task</h3>
+  <h3 class="text-light" style="font-family: 'Source Sans Pro'; sans-serif;">Add new task</h3>
 </div>
 `
 
@@ -36,6 +36,9 @@ $("#open-login-card").on("click", () => {
   $(".register-form-wrapper").fadeOut(100)
   $(".login-form-wrapper").fadeIn(250)
 });
+
+$("#sidebar").hide()
+$("#top-navbar").hide()
 
 $(document).ready(() => {
   $("#menu-toggle").click(function(e) {
@@ -443,12 +446,14 @@ function onSignIn(googleUser) {
 
   if (localStorage.getItem("token")) {
     $("#landing-page").hide()
+    $("#add-new-task-button").empty()
     $("#add-new-task-button").append(newTaskButton)
     $("#authenticated-page").show()
   }
 }
 
-function loginUser() {
+function loginUser(event) {
+  event.preventDefault()
   let $emailInput = $("#email-login-input").val()
   let $passwordInput = $("#password-login-input").val()
 
@@ -545,7 +550,8 @@ function signOut() {
 }
 
 
-function registerUser() {
+function registerUser(event) {
+  event.preventDefault()
   const $emailInput = $("#email-register-input").val()
   const $fullNameInput = $("#full-name-register-input").val()
   const $passwordInput = $("#password-register-input").val()
