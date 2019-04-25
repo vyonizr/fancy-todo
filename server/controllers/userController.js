@@ -26,8 +26,8 @@ class UserController {
     })
     .then(foundUser => {
       if (!foundUser) {
-        res.status(404).json({
-          message: "Email not found"
+        res.status(401).json({
+          message: "Wrong username/password"
         })
       }
       else if (bcrypt.compareSync(req.body.password, foundUser.password)) {
@@ -70,7 +70,17 @@ class UserController {
       res.status(200).json({ token })
     })
     .catch(err => {
-      if (err.errors.email || err.errors.name || err.errors.password) {
+      if (err.errors) {
+        let objError = {}
+        if (err.errors.email) {
+          objError.email = err.errors.email.message
+        }
+        if (err.errors.name) {
+          objError.name = err.errors.name.message
+        }
+        if (err.errors.password) {
+          objError.password = err.errors.password.message
+        }
         res.status(400).json({
           message: err.message
         })
